@@ -1,0 +1,60 @@
+name: stock
+
+on:
+  schedule:
+    - cron: '30 6 * * 1-5'   # 北京时间14:30
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - run: pip install akshare pandas
+
+      - name: run script
+        run: |
+          python <<EOF
+          import akshare as ak
+          import pandas as pd
+
+          df = ak.stock_zh_a_spot_em()
+
+          df = df.rename(columns={
+              "涨跌幅":"change",
+              "量比":"volume",
+              "换手率":"turnover"
+          })
+
+          df = df[
+              (df['change']>=3)&(df['change']<=5)&
+              (df['volume']>1)&
+              (df['turnover']>=5)
+          ]
+
+          df = df.sort_values(by="change", ascending=False)
+
+          result = df.head(5)[["名称","change","turnover","volume"]]
+
+          result.to_json("data.json", orient="records", force_ascii=False)EOF
+
+      - name: push
+
+        run: |
+
+          git config --global user.name "bot"
+
+          git config --global user.email "bot@github.com"
+
+          git add .
+
+          git commit -m "update data"
+
+          git push
+         
