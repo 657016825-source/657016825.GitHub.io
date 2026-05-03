@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8">
+
+<title>一夜持股终极版</title>
+
+<style>
+
+body { font-family: Arial; padding: 10px; background:#111; color:#eee;}
+
+h2 { text-align:center; color:#0f0;}
+
+.stock { padding:10px; border-bottom:1px solid #333;}
+
+.good { color:#0f0;}
+
+.bad { color:#f33;}
+
+button { padding:10px; width:100%; font-size:16px; margin-bottom:10px;}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>🔥 一夜持股终极版</h2>
+
+<button onclick="run()">开始选股</button>
+
+<div id="result"></div>
+
+<script>
+
+// ⭐评分系统（终极版核心）
+
+function score(s){
+
+    let sc = 0;
+
+    // 基础
+
+    sc += (s.change - 3) * 10;
+
+    sc += s.volume_ratio * 5;
+
+    // 换手最佳
+
+    sc += (10 - Math.abs(s.turnover - 8));
+
+    // 龙头加分
+
+    if(s.leader) sc += 20;
+
+    // 收盘强度
+
+    if(s.close_strength > 0.95) sc += 15;
+
+    // 尾盘资金
+
+    if(s.end_flow) sc += 15;
+
+    return sc;
+
+}
+
+function run(){
+
+    // 👉 这里是模拟数据（后面可接真实）
+
+    let data = [
+
+        {
+
+            name:"龙头股A",
+
+            change:4.3,
+
+            volume_ratio:2.1,
+          turnover:7.8,
+
+            leader:true,
+
+            close_strength:0.97,
+
+            end_flow:true
+
+        },
+
+        {
+
+            name:"跟风股B",
+
+            change:3.5,
+
+            volume_ratio:1.2,
+
+            turnover:6.0,
+
+            leader:false,
+
+            close_strength:0.92,
+
+            end_flow:false
+
+        },
+
+        {
+
+            name:"强势股C",
+
+            change:4.8,
+
+            volume_ratio:2.5,
+
+            turnover:9.2,
+
+            leader:true,
+
+            close_strength:0.98,
+
+            end_flow:true
+
+        }
+
+    ];
+
+    // 筛选条件（终极版）
+
+    let result = data.filter(s =>
+
+        s.change >= 3 && s.change <= 5 &&
+
+        s.volume_ratio > 1 &&
+
+        s.turnover >= 6 && s.turnover <= 12 &&
+
+        s.close_strength >= 0.95
+
+    );
+
+    // 排序
+
+    result.sort((a,b)=> score(b)-score(a));
+
+    let html = "";
+
+    result.forEach(s=>{
+
+        html += `
+
+        <div class="stock good">
+
+        🔥 ${s.name} <br>
+
+        涨幅: ${s.change}% | 换手: ${s.turnov
