@@ -1,58 +1,58 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
 <meta charset="utf-8">
-<title>一夜持股工具</title>
+
+<title>一夜持股自动版</title>
+
 <style>
+
 body { background:#111; color:#fff; font-family:Arial; padding:10px;}
+
 h2 { color:#0f0;}
+
 .stock { padding:10px; border-bottom:1px solid #333;}
+
 </style>
+
 </head>
 
 <body>
 
-<h2>🔥 一夜持股选股工具</h2>
-<button onclick="run()">开始选股</button>
+<h2>🔥 一夜持股自动选股</h2>
 
-<div id="result"></div>
+<button onclick="run()">获取今日股票</button>
+
+<div id="result">（点击按钮加载）</div>
 
 <script>
 
-function score(s){
-    return (s.change*2 + s.volume + s.turnover);
-}
+async function run(){
 
-function run(){
+    let res = await fetch("data.json");
 
-    let data = [
-        {name:"强势股A", change:4.2, volume:2.0, turnover:7.5},
-        {name:"普通股B", change:2.1, volume:1.0, turnover:3.2},
-        {name:"龙头股C", change:4.8, volume:2.5, turnover:9.0}
-    ];
+    let data = await res.json();
 
-    let result = data.filter(s =>
-        s.change>=3 && s.change<=5 &&
-        s.volume>1 &&
-        s.turnover>=5
-    );
+    let html = "";
 
-    result.sort((a,b)=>score(b)-score(a));
+    data.forEach(s=>{
 
-    let html="";
-
-    result.forEach(s=>{
         html += `
+
         <div class="stock">
-        🔥 ${s.name}<br>
-        涨幅:${s.change}% | 换手:${s.turnover}%<br>
-        ⭐评分:${score(s).toFixed(1)}
+
+        🔥 ${s.名称}<br>
+
+        涨幅:${s.change}% | 换手:${s.turnover}% | 量比:${s.volume}
 
         </div>`;
 
     });
 
-    if(result.length==0){
+    if(data.length==0){
 
         html="今天不适合做（空仓）";
 
