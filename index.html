@@ -1,69 +1,66 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="zh">
 <head>
-
-<meta charset="utf-8">
-
-<title>一夜持股自动版</title>
-
+<meta charset="UTF-8">
+<title>一夜持股法筛选工具</title>
 <style>
-
-body { background:#111; color:#fff; font-family:Arial; padding:10px;}
-
-h2 { color:#0f0;}
-
-.stock { padding:10px; border-bottom:1px solid #333;}
-
+body { font-family: Arial; padding: 20px; }
+input { margin: 5px; }
+.result { margin-top: 20px; font-weight: bold; }
 </style>
-
 </head>
-
 <body>
 
-<h2>🔥 一夜持股自动选股</h2>
+<h2>一夜持股法筛选</h2>
 
-<button onclick="run()">获取今日股票</button>
+<p>涨幅(%)：<input id="zf" type="number"></p>
+<p>量比：<input id="lb" type="number"></p>
+<p>流通市值(亿)：<input id="sz" type="number"></p>
+<p>换手率(%)：<input id="hs" type="number"></p>
+<p>是否放量上涨：
+<select id="fl">
+<option value="yes">是</option>
+<option value="no">否</option>
+</select>
+</p>
+<p>是否均线上方：
+<select id="jx">
+<option value="yes">是</option>
+<option value="no">否</option>
+</select>
+</p>
 
-<div id="result">（点击按钮加载）</div>
+<button onclick="check()">开始筛选</button>
+
+<div class="result" id="result"></div>
 
 <script>
+function check() {
+  let zf = parseFloat(document.getElementById('zf').value); 
+  let lb = parseFloat(document.getElementById('lb').value);
+  let sz = parseFloat(document.getElementById('sz').value);
+  let hs = parseFloat(document.getElementById('hs').value);
+  let fl = document.getElementByIt('fl').value;
 
-async function run(){
+let ok=true;
 
-    let res = await fetch("data.json");
+    if (zf < 3 || zf > 5) ok = false;
+  if (lb <= 1) ok = false;
+  if (sz < 50 || sz > 200) ok = false;
+  if (hs < 5 || hs > 10) ok = false;
+  if (fl !== "yes") ok = false;
+  if (jx !== "yes") ok = false;
 
-    let data = await res.json();
+    let result = document.getElementById('result');
 
-    let html = "";
-
-    data.forEach(s=>{
-
-        html += `
-
-        <div class="stock">
-
-        🔥 ${s.名称}<br>
-
-        涨幅:${s.change}% | 换手:${s.turnover}% | 量比:${s.volume}
-
-        </div>`;
-
-    });
-
-    if(data.length==0){
-
-        html="今天不适合做（空仓）";
-
-    }
-
-    document.getElementById("result").innerHTML=html;
-
-}
-
+      if (ok) {
+    result.innerHTML = "✅ 符合一夜持股法，可以关注";
+    result.style.color = "green";
+  } else {
+    result.innerHTML = "❌ 不符合条件";
+    result.style.color = "red";
+          }
+｝
 </script>
-
-</body>
-
-</html>
+</ body> </html>
+    
